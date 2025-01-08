@@ -1,4 +1,4 @@
-# clarabel_mex
+# clarabel.m
 MATLAB mex interface to Clarabel, an interior point solver for convex optimization.
 
 # Description
@@ -10,6 +10,8 @@ A more detail description will follow soon. Also some files are missing. The maj
 1. Clone Clarabel.cpp repository, install according to description (get submodules, get compiler,...) and build the project to get libraries.
 2. Put libraries in same folder, where make_clarabel.m lies
 3. Execute make_clarabel.m to generate the mex file
-4. After mex file is generated, that the clarabel_c.dll lies in the same folder as the mex function
+4. After mex file is generated, the clarabel_c.dll must lie in the same folder as the mex function
+
+
     
 
