@@ -18,6 +18,9 @@ A more detailed description will follow soon. Also, some files are missing. The 
 
 Ensure you have the necessary mex file and libraries set up correctly before running the example. This example demonstrates basic usage and can be extended for more complex scenarios.
 
+# Current Status
+The current interface allow to solve all problems except SDPs. In the example folder, the MATLAB implementation of the examples found in the Clarabel.cpp repo are implemented. 
+
 # Usage Example
 
 Below is an usage example to showcase solving a more detailed optimization problem.
