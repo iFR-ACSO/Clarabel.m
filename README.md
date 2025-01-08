@@ -21,7 +21,7 @@ A more detailed description will follow soon such that user can compile it. The 
 Ensure you have the necessary mex file and libraries set up correctly before running the example. This example demonstrates basic usage and can be extended for more complex scenarios.
 
 # Current Status
-The current interface allow to solve all problems except SDPs. In the example folder, the MATLAB implementation of the examples found in the Clarabel.cpp repo are implemented. 
+The current interface allow to solve all problems except SDPs. In the example folder, the MATLAB implementation of the examples found in the Clarabel.cpp repo are implemented. The current version is kept simple and will be adapted and augmented in the (near) future. 
 
 # Usage Example
 
