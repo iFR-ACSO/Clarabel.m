@@ -26,7 +26,7 @@ The current interface allow to solve all problems except SDPs. In the example fo
 # Usage Example
 
 Below is an usage example to showcase solving an optimization problem.
-The following example simply implements the [getting started example for Python](https://clarabel.org/stable/python/getting_started_py/)) via the MATLAB/mex interface. More Examples can be found in the examples folder.
+The following example simply implements the [getting started example for Python](https://clarabel.org/stable/python/getting_started_py/) via the MATLAB/mex interface. More Examples can be found in the examples folder.
 
 ```matlab
 
