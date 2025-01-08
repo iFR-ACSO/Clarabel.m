@@ -24,21 +24,14 @@ Below is an extended usage example to showcase solving a more detailed optimizat
 
 ### Problem Format
 
-The optimization problem has the form:
+The optimization problem has the form: 
 
+
+The following example simply implements the getting started example from 
+https://clarabel.org/stable/python/getting_started_py/
 ```matlab
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%
-% Simply implements the getting started example from 
-% https://clarabel.org/stable/python/getting_started_py/
-%
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-clc
-clear
-
-
-% define cost
+% define cost: 1/2 x^T P x + q^T x
 P = sparse(triu([ 3., 1., -1.;
                   1., 4.,  2.;
                  -1., 2.,  5.]));
