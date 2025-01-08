@@ -1,4 +1,4 @@
-# clarabel.m
+a# clarabel.m
 
 MATLAB mex interface to [Clarabel](https://clarabel.org/stable/), an interior point solver for convex optimization.
 
@@ -18,7 +18,7 @@ A more detailed description will follow soon such that user can compile it. The 
 4. After the mex file is generated, the `clarabel_c.dll` must lie in the same folder as the mex function (Windows).
 
 
-Ensure you have the necessary mex file and libraries set up correctly before running the example. This example demonstrates basic usage and can be extended for more complex scenarios.
+Ensure you have the necessary mex file and libraries set up correctly before runni e.g. the examples provided.
 
 # Current Status
 The current interface allow to solve all problems except SDPs. In the example folder, the MATLAB implementation of the examples found in the Clarabel.cpp repo are implemented. The current version is kept simple and will be adapted and augmented in the (near) future. 
