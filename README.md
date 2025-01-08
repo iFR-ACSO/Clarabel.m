@@ -4,17 +4,18 @@ MATLAB mex interface to Clarabel, an interior point solver for convex optimizati
 
 # Description
 
-This repository contains a (work in progress) MATLAB mex interface to the recently introduced interior point solver [Clarabel](https://clarabel.org/stable/). The mex interface is interfaced to [Clarabel.cpp]([https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation via [eigen]([https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
+This repository contains a (work in progress) MATLAB mex interface to the recently introduced interior point solver [Clarabel](https://clarabel.org/stable/). The mex interface is interfaced to 
+[Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
 This version already cotains the compiled mex function for Windows and the needed binaries. On Windows, add the folder and subbfolder to your path. Try the examples in the example folder.
 
 A more detailed description will follow soon. The major steps for installation:
 
-1. Clone Clarabel.cpp repository, install according to the description (get submodules, get compiler, etc.), and build the project to get libraries.
+1. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)) repository, install according to the description (get submodules, get compiler, etc.), and build the project to get libraries (for Windows: clarabel_c.lib, clarabel_c.dll.lib and clarabel_c.dll)
 2. Put libraries in the same folder where `make_clarabel.m` lies.
 3. Execute `make_clarabel.m` to generate the mex file.
-4. After the mex file is generated, the `clarabel_c.dll` must lie in the same folder as the mex function.
+4. After the mex file is generated, the `clarabel_c.dll` must lie in the same folder as the mex function (Windows).
 
 
 Ensure you have the necessary mex file and libraries set up correctly before running the example. This example demonstrates basic usage and can be extended for more complex scenarios.
@@ -24,9 +25,9 @@ The current interface allow to solve all problems except SDPs. In the example fo
 
 # Usage Example
 
-Below is an usage example to showcase solving a more detailed optimization problem.
-The following example simply implements the getting started example from 
-https://clarabel.org/stable/python/getting_started_py/
+Below is an usage example to showcase solving an optimization problem.
+The following example simply implements the [getting started example for Python](https://clarabel.org/stable/python/getting_started_py/)) via the MATLAB/mex interface. More Examples can be found in the examples folder.
+
 ```matlab
 
 % define cost: 1/2 x^T P x + q^T x
