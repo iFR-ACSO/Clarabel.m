@@ -8,9 +8,9 @@ This repository contains a (work in progress) MATLAB mex interface to the recent
 [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
-This version already cotains the compiled mex function for Windows and the needed binaries. On Windows, add the folder and subbfolder to your path. Try the examples in the example folder.
+This version already cotains the compiled mex function for Windows (Clarabel 0.9.0) and the needed binaries. On Windows, add the folder to your path to use the interface. Try the examples in the example folder.
 
-A more detailed description will follow soon. The major steps for installation:
+A more detailed description will follow soon such that user can compile it. The major steps for installation:
 
 1. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)) repository, install according to the description (get submodules, get compiler, etc.), and build the project to get libraries (for Windows: clarabel_c.lib, clarabel_c.dll.lib and clarabel_c.dll)
 2. Put libraries in the same folder where `make_clarabel.m` lies.
