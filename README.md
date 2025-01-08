@@ -20,13 +20,7 @@ Ensure you have the necessary mex file and libraries set up correctly before run
 
 # Usage Example
 
-Below is an extended usage example to showcase solving a more detailed optimization problem.
-
-### Problem Format
-
-The optimization problem has the form: 
-
-
+Below is an usage example to showcase solving a more detailed optimization problem.
 The following example simply implements the getting started example from 
 https://clarabel.org/stable/python/getting_started_py/
 ```matlab
@@ -71,5 +65,4 @@ sol = clarabel_mex(P,q,A,b,cones,settings)
 
 ```
 
-This example demonstrates more advanced features, including constraints and cone specifications. It highlights how to work with equality constraints, inequalities, and second-order cone constraints in MATLAB using the Clarabel mex interface.
-
+The order of the cones can be arbitrary similar to the Python interface.
