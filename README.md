@@ -1,6 +1,6 @@
 # clarabel.m
 
-MATLAB mex interface to Clarabel, an interior point solver for convex optimization.
+MATLAB mex interface to [Clarabel](https://clarabel.org/stable/), an interior point solver for convex optimization.
 
 # Description
 
