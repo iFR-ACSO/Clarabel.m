@@ -7,8 +7,9 @@ MATLAB mex interface to Clarabel, an interior point solver for convex optimizati
 This repository contains a (work in progress) MATLAB mex interface to the recently introduced interior point solver Clarabel ([https://clarabel.org/stable/](https://clarabel.org/stable/)). The mex interface is interfaced to Clarabel.cpp ([https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation via eigen ([https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
+This version already cotains the compiled mex function for Windows and the needed binaries. On Windows, add the folder and subbfolder to your path. Try the examples in the example folder.
 
-A more detailed description will follow soon. Also, some files are missing. The major steps for installation:
+A more detailed description will follow soon. The major steps for installation:
 
 1. Clone Clarabel.cpp repository, install according to the description (get submodules, get compiler, etc.), and build the project to get libraries.
 2. Put libraries in the same folder where `make_clarabel.m` lies.
