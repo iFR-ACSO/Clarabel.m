@@ -5,10 +5,10 @@ MATLAB mex interface to [Clarabel](https://clarabel.org/stable/), an interior po
 # Description
 
 This repository contains a (work in progress) MATLAB mex interface to the recently introduced interior point solver [Clarabel](https://clarabel.org/stable/). The mex interface is interfaced to 
-[Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
+[Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation is realized via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
-This version already cotains the compiled mex function for Windows (Clarabel 0.9.0) and the needed binaries. On Windows, add the folder to your path to use the interface. Try the examples in the example folder.
+This version already contains the compiled mex function for Windows (Clarabel 0.9.0) and the needed binaries. On Windows, add the folder to your path. Try the examples in the example folder.
 
 A more detailed description will follow soon such that user can compile it. The major steps for installation:
 
