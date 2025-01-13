@@ -5,10 +5,10 @@ MATLAB mex interface to [Clarabel](https://clarabel.org/stable/), an interior po
 # Description
 
 This repository contains a (work in progress) MATLAB mex interface to the recently introduced interior point solver [Clarabel](https://clarabel.org/stable/). The mex interface is interfaced to 
-[Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
+[Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation is realized via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
-This version already cotains the compiled mex function for Windows (Clarabel 0.9.0) and the needed binaries. On Windows, add the folder to your path to use the interface. Try the examples in the example folder.
+This version already contains the compiled mex function for Windows (Clarabel 0.9.0) and the needed binaries. MATLAB 2023b and MinGW64 Compiler (C++) was used. On Windows, add the folder to your path. Try the examples in the example folder.
 
 A more detailed description will follow soon such that user can compile it. The major steps for installation:
 
@@ -18,10 +18,10 @@ A more detailed description will follow soon such that user can compile it. The 
 4. After the mex file is generated, the `clarabel_c.dll` must lie in the same folder as the mex function (Windows).
 
 
-Ensure you have the necessary mex file and libraries set up correctly before running the example. This example demonstrates basic usage and can be extended for more complex scenarios.
+Ensure you have the necessary mex file and libraries set up correctly before running e.g. the examples provided.
 
 # Current Status
-The current interface allow to solve all problems except SDPs. In the example folder, the MATLAB implementation of the examples found in the Clarabel.cpp repo are implemented. 
+The current interface allow to solve all problems except SDPs. In the example folder, the MATLAB implementation of the examples found in the Clarabel.cpp repo are implemented. The current version is kept simple and will be adapted and augmented in the (near) future. 
 
 # Usage Example
 
