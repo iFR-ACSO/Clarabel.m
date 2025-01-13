@@ -1,3 +1,4 @@
+
 #include "mex.h"
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -77,171 +78,185 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     b = Eigen::Map<Eigen::VectorXd>(mxGetPr(prhs[3]), mxGetM(prhs[3]) * mxGetN(prhs[3]), 1);
 
 
-// Get the cones struct
-const mxArray *conesStruct = prhs[4];
+	// Get the cones struct
+	const mxArray *conesStruct = prhs[4];
+	
+	// Check if the cones input is a struct
+	if (!mxIsStruct(conesStruct)) {
+		mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Fifth input must be a struct.");
+	}
+	
+	// Get the number of entries in the cones struct
+	mwSize numCones = mxGetNumberOfElements(conesStruct);
+	
+	// Initialize the cones for clarabel
+	std::vector<SupportedConeT<double>> cones;
+	
+	// Loop over the entries in the cones struct
+	for (mwSize i = 0; i < numCones; ++i) {
+		// Get the cone name
+		mxArray *coneNameArray = mxGetField(conesStruct, i, "coneName");
+		if (!coneNameArray) {
+			mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Each entry in the cones struct must have a 'coneName' field.");
+		}
+	
+		char *coneName = mxArrayToString(coneNameArray);
+	
+		// Get the cone dimension
+		mxArray *dimArray = mxGetField(conesStruct, i, "dim");
+		if (!dimArray) {
+			mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Each entry in the cones struct must have a 'dim' field.");
+		}
+		
+		// Add the cone to the vector based on the cone name
+		if (strcmp(coneName, "ZeroCone") == 0) {
+			uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
+			if (dim > 0) {
+				cones.push_back(ZeroConeT<double>(dim));
+			}
+		} else if (strcmp(coneName, "NonnegativeCone") == 0) {
+			uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
+			if (dim > 0) {
+				cones.push_back(NonnegativeConeT<double>(dim));
+			}
+		} else if (strcmp(coneName, "SecondOrderCone") == 0) {
+			uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
+			if (dim > 0) {
+				cones.push_back(SecondOrderConeT<double>(dim));
+			}
+		}  else if (strcmp(coneName, "ExponentialCone") == 0) {
+			
+				cones.push_back(ExponentialConeT<double>());
+		
+		} else if (strcmp(coneName, "PowerCone") == 0) {
+			double power = mxGetScalar(dimArray);
+				cones.push_back(PowerConeT<double>(power ));
+		
+		} 
+		else if (strcmp(coneName, "GenPowerCone") == 0) {
+	
+			uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
+	
+			mxArray *alphaArray = mxGetField(conesStruct, i, "alpha");
+			if (!alphaArray) {
+				mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Each entry in the GenPowerCone struct must have an 'alpha' field.");
+			}
+			Eigen::Map<Eigen::VectorXd> alpha(mxGetPr(alphaArray), mxGetM(alphaArray) * mxGetN(alphaArray));
+	
+			cones.push_back(GenPowerConeT<double>(alpha,dim ));
+		
+		} 
+		#ifdef FEATURE_SDP
+		    else if (strcmp(coneName, "PSDTriangleCone") == 0) {
+			
+				uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
+				if (dim > 0) {
+					cones.push_back(PSDTriangleConeT<double>(dim));
+				} 
 
-// Check if the cones input is a struct
-if (!mxIsStruct(conesStruct)) {
-    mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Fifth input must be a struct.");
-}
+		}
+		#else
+		else if (strcmp(coneName, "PSDTriangleCone") == 0) {
+			mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "SDP cones are not supported in this build. Activate SDP-feature in CMakeLists.txt and rebuild.");
+		}
+		#endif
+		else {
 
-// Get the number of entries in the cones struct
-mwSize numCones = mxGetNumberOfElements(conesStruct);
-
-// Initialize the cones for clarabel
-std::vector<SupportedConeT<double>> cones;
-
-// Loop over the entries in the cones struct
-for (mwSize i = 0; i < numCones; ++i) {
-    // Get the cone name
-    mxArray *coneNameArray = mxGetField(conesStruct, i, "coneName");
-    if (!coneNameArray) {
-        mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Each entry in the cones struct must have a 'coneName' field.");
-    }
-
-    char *coneName = mxArrayToString(coneNameArray);
-
-    // Get the cone dimension
-    mxArray *dimArray = mxGetField(conesStruct, i, "dim");
-    if (!dimArray) {
-        mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Each entry in the cones struct must have a 'dim' field.");
-    }
-    
-    // Add the cone to the vector based on the cone name
-    if (strcmp(coneName, "ZeroCone") == 0) {
-        uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
-        if (dim > 0) {
-            cones.push_back(ZeroConeT<double>(dim));
-        }
-    } else if (strcmp(coneName, "NonnegativeCone") == 0) {
-        uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
-        if (dim > 0) {
-            cones.push_back(NonnegativeConeT<double>(dim));
-        }
-    } else if (strcmp(coneName, "SecondOrderCone") == 0) {
-        uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
-        if (dim > 0) {
-            cones.push_back(SecondOrderConeT<double>(dim));
-        }
-    } else if (strcmp(coneName, "ExponentialCone") == 0) {
-        
-            cones.push_back(ExponentialConeT<double>());
-       
-    } else if (strcmp(coneName, "PowerCone") == 0) {
-        double power = mxGetScalar(dimArray);
-            cones.push_back(PowerConeT<double>(power ));
-       
-    } 
-    else if (strcmp(coneName, "GenPowerCone") == 0) {
-
-            uintptr_t dim = static_cast<uintptr_t>(mxGetScalar(dimArray));
-
-            mxArray *alphaArray = mxGetField(conesStruct, i, "alpha");
-            if (!alphaArray) {
-                mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Each entry in the GenPowerCone struct must have an 'alpha' field.");
-            }
-            Eigen::Map<Eigen::VectorXd> alpha(mxGetPr(alphaArray), mxGetM(alphaArray) * mxGetN(alphaArray));
-
-            cones.push_back(GenPowerConeT<double>(alpha,dim ));
-       
-    }
-    
-    else {
-        mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Unknown cone name: %s", coneName);
-    }
-
-    // Free the allocated memory for the cone name
-    mxFree(coneName);
-}
-
-// Get the user settings struct
-const mxArray *userSettingsStruct = prhs[5];
-
-// Check if the user settings input is a struct
-if (!mxIsStruct(userSettingsStruct)) {
-    mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Sixth input must be a struct.");
-}
- 
-// Extract the fields from the user settings struct
-bool verbose = static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "verbose")));
-int max_iter = static_cast<int>(mxGetScalar(mxGetField(userSettingsStruct, 0, "max_iter")));
-int equilibrate_max_iter = static_cast<int>(mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_max_iter")));
-int iterative_refinement_max_iter = static_cast<int>(mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_max_iter")));
-
-bool equilibrate_enable = static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_enable")));
-bool direct_kkt_solver = static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "direct_kkt_solver")));
-bool static_regularization_enable = static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "static_regularization_enable")));
-bool dynamic_regularization_enable = static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "dynamic_regularization_enable")));
-bool iterative_refinement_enable = static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_enable")));
-bool presolve_enable = static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "presolve_enable")));
-
-double time_limit = mxGetScalar(mxGetField(userSettingsStruct, 0, "time_limit"));
-double max_step_fraction = mxGetScalar(mxGetField(userSettingsStruct, 0, "max_step_fraction"));
-double tol_gap_abs = mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_gap_abs"));
-double tol_gap_rel = mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_gap_rel"));
-double tol_feas = mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_feas"));
-double tol_infeas_abs = mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_infeas_abs"));
-double tol_infeas_rel = mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_infeas_rel"));
-double tol_ktratio = mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_ktratio"));
-double reduced_tol_gap_abs = mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_gap_abs"));
-double reduced_tol_gap_rel = mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_gap_rel"));
-double reduced_tol_feas = mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_feas"));
-double reduced_tol_infeas_abs = mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_infeas_abs"));
-double reduced_tol_infeas_rel = mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_infeas_rel"));
-double reduced_tol_ktratio = mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_ktratio"));
-double equilibrate_min_scaling = mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_min_scaling"));
-double equilibrate_max_scaling = mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_max_scaling"));
-double linesearch_backtrack_step = mxGetScalar(mxGetField(userSettingsStruct, 0, "linesearch_backtrack_step"));
-double min_switch_step_length = mxGetScalar(mxGetField(userSettingsStruct, 0, "min_switch_step_length"));
-double min_terminate_step_length = mxGetScalar(mxGetField(userSettingsStruct, 0, "min_terminate_step_length"));
-double static_regularization_constant = mxGetScalar(mxGetField(userSettingsStruct, 0, "static_regularization_constant"));
-double static_regularization_proportional = mxGetScalar(mxGetField(userSettingsStruct, 0, "static_regularization_proportional"));
-double dynamic_regularization_eps = mxGetScalar(mxGetField(userSettingsStruct, 0, "dynamic_regularization_eps"));
-double dynamic_regularization_delta = mxGetScalar(mxGetField(userSettingsStruct, 0, "dynamic_regularization_delta"));
-double iterative_refinement_reltol = mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_reltol"));
-double iterative_refinement_abstol = mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_abstol"));
-double iterative_refinement_stop_ratio = mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_stop_ratio"));
-
-// Settings; overwrite the default settings with user input, in case user provides the field; otherwise, the same default value as in default settings "overwrites" the default value
-DefaultSettings<double> settings = DefaultSettingsBuilder<double>::default_settings()
-                                       .verbose(verbose)
-                                       .max_iter(max_iter)
-                                       .equilibrate_max_iter(equilibrate_max_iter)
-                                       .iterative_refinement_max_iter(iterative_refinement_max_iter)
-                                       .equilibrate_enable(equilibrate_enable)
-                                       .direct_kkt_solver(direct_kkt_solver)
-                                       .static_regularization_enable(static_regularization_enable)
-                                       .dynamic_regularization_enable(dynamic_regularization_enable)
-                                       .iterative_refinement_enable(iterative_refinement_enable)
-                                       .presolve_enable(presolve_enable)
-                                       .time_limit(time_limit)
-                                       .max_step_fraction(max_step_fraction)
-                                       .tol_gap_abs(tol_gap_abs)
-                                       .tol_gap_rel(tol_gap_rel)
-                                       .tol_feas(tol_feas)
-                                       .tol_infeas_abs(tol_infeas_abs)
-                                       .tol_infeas_rel(tol_infeas_rel)
-                                       .tol_ktratio(tol_ktratio)
-                                       .reduced_tol_gap_abs(reduced_tol_gap_abs)
-                                       .reduced_tol_gap_rel(reduced_tol_gap_rel)
-                                       .reduced_tol_feas(reduced_tol_feas)
-                                       .reduced_tol_infeas_abs(reduced_tol_infeas_abs)
-                                       .reduced_tol_infeas_rel(reduced_tol_infeas_rel)
-                                       .reduced_tol_ktratio(reduced_tol_ktratio)
-                                       .equilibrate_min_scaling(equilibrate_min_scaling)
-                                       .equilibrate_max_scaling(equilibrate_max_scaling)
-                                       .linesearch_backtrack_step(linesearch_backtrack_step)
-                                       .min_switch_step_length(min_switch_step_length)
-                                       .min_terminate_step_length(min_terminate_step_length)
-                                       .static_regularization_constant(static_regularization_constant)
-                                       .static_regularization_proportional(static_regularization_proportional)
-                                       .dynamic_regularization_eps(dynamic_regularization_eps)
-                                       .dynamic_regularization_delta(dynamic_regularization_delta)
-                                       .iterative_refinement_reltol(iterative_refinement_reltol)
-                                       .iterative_refinement_abstol(iterative_refinement_abstol)
-                                       .iterative_refinement_stop_ratio(iterative_refinement_stop_ratio)
-                                       .build();
-    
+			mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Unknown cone name: %s", coneName);
+		}
+	
+		// Free the allocated memory for the cone name
+		mxFree(coneName);
+	}
+	
+	// Get the user settings struct
+	const mxArray *userSettingsStruct = prhs[5];
+	
+	// Check if the user settings input is a struct
+	if (!mxIsStruct(userSettingsStruct)) {
+		mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Sixth input must be a struct.");
+	}
+	
+	// Extract the fields from the user settings struct (for readability)
+	bool verbose 								= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "verbose")));
+	int max_iter 								= static_cast<int>(mxGetScalar(mxGetField(userSettingsStruct, 0, "max_iter")));
+	int equilibrate_max_iter					= static_cast<int>(mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_max_iter")));
+	int iterative_refinement_max_iter 			= static_cast<int>(mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_max_iter")));
+	
+	bool equilibrate_enable 					= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_enable")));
+	bool direct_kkt_solver 						= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "direct_kkt_solver")));
+	bool static_regularization_enable 			= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "static_regularization_enable")));
+	bool dynamic_regularization_enable 			= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "dynamic_regularization_enable")));
+	bool iterative_refinement_enable 			= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_enable")));
+	bool presolve_enable 						= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "presolve_enable")));
+	
+	double time_limit 							= mxGetScalar(mxGetField(userSettingsStruct, 0, "time_limit"));
+	double max_step_fraction 					= mxGetScalar(mxGetField(userSettingsStruct, 0, "max_step_fraction"));
+	double tol_gap_abs 							= mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_gap_abs"));
+	double tol_gap_rel 							= mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_gap_rel"));
+	double tol_feas 							= mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_feas"));
+	double tol_infeas_abs 						= mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_infeas_abs"));
+	double tol_infeas_rel 						= mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_infeas_rel"));
+	double tol_ktratio 							= mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_ktratio"));
+	double reduced_tol_gap_abs 					= mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_gap_abs"));
+	double reduced_tol_gap_rel 					= mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_gap_rel"));
+	double reduced_tol_feas 					= mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_feas"));
+	double reduced_tol_infeas_abs 				= mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_infeas_abs"));
+	double reduced_tol_infeas_rel 				= mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_infeas_rel"));
+	double reduced_tol_ktratio 					= mxGetScalar(mxGetField(userSettingsStruct, 0, "reduced_tol_ktratio"));
+	double equilibrate_min_scaling 				= mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_min_scaling"));
+	double equilibrate_max_scaling 				= mxGetScalar(mxGetField(userSettingsStruct, 0, "equilibrate_max_scaling"));
+	double linesearch_backtrack_step 			= mxGetScalar(mxGetField(userSettingsStruct, 0, "linesearch_backtrack_step"));
+	double min_switch_step_length 				= mxGetScalar(mxGetField(userSettingsStruct, 0, "min_switch_step_length"));
+	double min_terminate_step_length 			= mxGetScalar(mxGetField(userSettingsStruct, 0, "min_terminate_step_length"));
+	double static_regularization_constant 		= mxGetScalar(mxGetField(userSettingsStruct, 0, "static_regularization_constant"));
+	double static_regularization_proportional 	= mxGetScalar(mxGetField(userSettingsStruct, 0, "static_regularization_proportional"));
+	double dynamic_regularization_eps 			= mxGetScalar(mxGetField(userSettingsStruct, 0, "dynamic_regularization_eps"));
+	double dynamic_regularization_delta 		= mxGetScalar(mxGetField(userSettingsStruct, 0, "dynamic_regularization_delta"));
+	double iterative_refinement_reltol 			= mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_reltol"));
+	double iterative_refinement_abstol 			= mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_abstol"));
+	double iterative_refinement_stop_ratio 		= mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_stop_ratio"));
+	
+	// Settings; overwrite the default settings with user input, in case user provides the field; otherwise, the same default value as in default settings "overwrites" the default value
+	DefaultSettings<double> settings = DefaultSettingsBuilder<double>::default_settings()
+																	.verbose(verbose)
+																	.max_iter(max_iter)
+																	.equilibrate_max_iter(equilibrate_max_iter)
+																	.iterative_refinement_max_iter(iterative_refinement_max_iter)
+																	.equilibrate_enable(equilibrate_enable)
+																	.direct_kkt_solver(direct_kkt_solver)
+																	.static_regularization_enable(static_regularization_enable)
+																	.dynamic_regularization_enable(dynamic_regularization_enable)
+																	.iterative_refinement_enable(iterative_refinement_enable)
+																	.presolve_enable(presolve_enable)
+																	.time_limit(time_limit)
+																	.max_step_fraction(max_step_fraction)
+																	.tol_gap_abs(tol_gap_abs)
+																	.tol_gap_rel(tol_gap_rel)
+																	.tol_feas(tol_feas)
+																	.tol_infeas_abs(tol_infeas_abs)
+																	.tol_infeas_rel(tol_infeas_rel)
+																	.tol_ktratio(tol_ktratio)
+																	.reduced_tol_gap_abs(reduced_tol_gap_abs)
+																	.reduced_tol_gap_rel(reduced_tol_gap_rel)
+																	.reduced_tol_feas(reduced_tol_feas)
+																	.reduced_tol_infeas_abs(reduced_tol_infeas_abs)
+																	.reduced_tol_infeas_rel(reduced_tol_infeas_rel)
+																	.reduced_tol_ktratio(reduced_tol_ktratio)
+																	.equilibrate_min_scaling(equilibrate_min_scaling)
+																	.equilibrate_max_scaling(equilibrate_max_scaling)
+																	.linesearch_backtrack_step(linesearch_backtrack_step)
+																	.min_switch_step_length(min_switch_step_length)
+																	.min_terminate_step_length(min_terminate_step_length)
+																	.static_regularization_constant(static_regularization_constant)
+																	.static_regularization_proportional(static_regularization_proportional)
+																	.dynamic_regularization_eps(dynamic_regularization_eps)
+																	.dynamic_regularization_delta(dynamic_regularization_delta)
+																	.iterative_refinement_reltol(iterative_refinement_reltol)
+																	.iterative_refinement_abstol(iterative_refinement_abstol)
+																	.iterative_refinement_stop_ratio(iterative_refinement_stop_ratio)
+																	.build();
+		
     // Build solver
     DefaultSolver<double> solver(P, q, A, b, cones, settings);
 
@@ -269,7 +284,7 @@ DefaultSettings<double> settings = DefaultSettingsBuilder<double>::default_setti
     Eigen::Map<Eigen::VectorXd>(mxGetPr(s), solution.s.size()) = solution.s;
     mxSetField(plhs[0], 0, "s", s);
 
-    // solution status (enumeration) to string; just for output
+    // solution status (enumeration) to string for output
     const char *status_str;
     switch (solution.status) {
         case SolverStatus::Unsolved:
