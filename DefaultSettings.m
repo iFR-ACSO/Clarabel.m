@@ -18,9 +18,9 @@ settings.iterative_refinement_enable = true;
 settings.presolve_enable = true; 
 
 % #ifdef FEATURE_SDP
-% settings.chordal_decomposition_enable = true; 
-% settings.chordal_decomposition_compact = true; 
-% settings.chordal_decomposition_complete_dual = true; 
+settings.chordal_decomposition_enable = true; 
+settings.chordal_decomposition_compact = true; 
+settings.chordal_decomposition_complete_dual = true; 
 % #endif
 
 % Double fields
@@ -52,9 +52,9 @@ settings.iterative_refinement_abstol = 1e-12;
 settings.iterative_refinement_stop_ratio = 5.0; 
 
 % Enum fields
-settings.direct_solve_method = 'qdldl'; % Default enum value
+settings.direct_solve_method = 'qldl'; % Default enum value
 % #ifdef FEATURE_SDP
-% settings.chordal_decomposition_merge_method = 'clique_graph'; 
+settings.chordal_decomposition_merge_method = 'clique_graph'; 
 % #endif
 
 end
