@@ -18,7 +18,7 @@ The following instructions are for Windows, using an MS Visual Studio compiler. 
 git clone https://github.com/iFR-ACSO/Clarabel.m.git 
 ```
 
-5. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)) and name it Clarabel
+5. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)) it into the main folder of Clarabel.m name it Clarabel (both needed because the relative paths are set in make_clarabel.m)
 ```
 git clone git@github.com:oxfordcontrol/Clarabel.cpp.git Clarabel
 ```
