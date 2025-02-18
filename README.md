@@ -15,7 +15,7 @@ This repository contains a (work in progress) MATLAB mex interface to the recent
 git clone https://github.com/iFR-ACSO/Clarabel.m.git 
 ```
 
-4. Clone Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main))
+4. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main))
 ```
 git clone git@github.com:oxfordcontrol/Clarabel.cpp.git Clarabel
 ```
@@ -42,7 +42,7 @@ git submodule update --init --recursive
 ```
 make_clarabel.m
 ```
-This command copies the needed .dll (`clarabel_c.dll` must lie in the same folder as the mex function (Windows)) from the release folder (Clarabel/Rust-Wrapper/Release) to the current folder and sets up the path to eigen library, and to the other needed libraries (from clarabel) and compiles the mex filde. After compilation, the path to Clarabel.m is added permanently to your Matlab path. This also includes DefaultSetting.m, Folder with the specific cone functions and the example package, i.e., the re-implemented examples in Matlab from the C++ example package.
+This command copies the needed .dll (`clarabel_c.dll` must lie in the same folder as the mex function (Windows)) from the release folder (Clarabel/Rust-Wrapper/Release) to the current folder and sets up the path to eigen library, and to the other needed libraries (from clarabel) and compiles the mex filde. After compilation, the path to Clarabel.m is added permanently to your Matlab path. This also includes DefaultSetting.m, the folder with the specific cone functions and the example package, i.e., the re-implemented examples in Matlab from the C++ example package.
 
 
 # Usage Example
