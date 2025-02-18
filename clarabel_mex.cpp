@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 
 using namespace clarabel;
@@ -189,7 +190,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	bool dynamic_regularization_enable 			= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "dynamic_regularization_enable")));
 	bool iterative_refinement_enable 			= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_enable")));
 	bool presolve_enable 						= static_cast<bool>(mxGetScalar(mxGetField(userSettingsStruct, 0, "presolve_enable")));
-	
+	ClarabelDirectSolveMethods direct_solve_method = static_cast<ClarabelDirectSolveMethods>(mxGetScalar(mxGetField(userSettingsStruct, 0, "direct_solve_method")));
+
 	double time_limit 							= mxGetScalar(mxGetField(userSettingsStruct, 0, "time_limit"));
 	double max_step_fraction 					= mxGetScalar(mxGetField(userSettingsStruct, 0, "max_step_fraction"));
 	double tol_gap_abs 							= mxGetScalar(mxGetField(userSettingsStruct, 0, "tol_gap_abs"));
@@ -216,7 +218,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	double iterative_refinement_reltol 			= mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_reltol"));
 	double iterative_refinement_abstol 			= mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_abstol"));
 	double iterative_refinement_stop_ratio 		= mxGetScalar(mxGetField(userSettingsStruct, 0, "iterative_refinement_stop_ratio"));
-	
+		// Get the direct solve method as a string
+	mxArray *solveMethodArray = mxGetField(userSettingsStruct, 0, "direct_solve_method");
+	if (!solveMethodArray) {
+		mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "User settings struct must have a 'direct_solve_method' field.");
+	}
+	// Get the clique merge method as a string
+	mxArray *mergeMethodArray = mxGetField(userSettingsStruct, 0, "chordal_decomposition_merge_method");
+	if (!mergeMethodArray) {
+		mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "User settings struct must have a 'chordal_decomposition_merge_method' field.");
+	}
+
 	// Settings; overwrite the default settings with user input, in case user provides the field; otherwise, the same default value as in default settings "overwrites" the default value
 	DefaultSettings<double> settings = DefaultSettingsBuilder<double>::default_settings()
 																	.verbose(verbose)
@@ -256,12 +268,48 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 																	.iterative_refinement_abstol(iterative_refinement_abstol)
 																	.iterative_refinement_stop_ratio(iterative_refinement_stop_ratio)
 																	.build();
-		
+
+
+
+	char *solveMethodStr = mxArrayToString(solveMethodArray);
+	if (strcmp(solveMethodStr, "qdldl") == 0) {
+		settings.direct_solve_method = ClarabelDirectSolveMethods::QDLDL;
+	} else if (strcmp(solveMethodStr, "FAER") == 0) {
+		settings.direct_solve_method = ClarabelDirectSolveMethods::FAER;
+	} else {
+		mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Unknown direct solve method: %s", solveMethodStr);
+	}
+
+
+
+	char *mergeMethodStr = mxArrayToString(mergeMethodArray);
+	if (strcmp(mergeMethodStr, "CLIQUE_GRAPH") == 0) {
+		settings.chordal_decomposition_merge_method = ClarabelCliqueMergeMethods::CLIQUE_GRAPH;
+	} else if (strcmp(mergeMethodStr, "PARENT_CHILD") == 0) {
+		settings.chordal_decomposition_merge_method = ClarabelCliqueMergeMethods::PARENT_CHILD;
+	} else if (strcmp(mergeMethodStr, "NONE") == 0) {
+		settings.chordal_decomposition_merge_method = ClarabelCliqueMergeMethods::NONE;
+	} else {
+		mexErrMsgIdAndTxt("MATLAB:clarabel_mex:invalidInput", "Unknown clique merge method: %s", mergeMethodStr);
+	}
+
+	// Free the allocated memory for the merge method string
+	mxFree(mergeMethodStr);
+
+	// Free the allocated memory for the solve method string
+	mxFree(solveMethodStr);
+    
     // Build solver
     DefaultSolver<double> solver(P, q, A, b, cones, settings);
 
     // Solve
+    solver.print_to_buffer();
     solver.solve();
+	if (verbose) {
+		std::string bufstr = solver.get_print_buffer();
+		std::cout << bufstr << std::endl;
+	}
+    
 
     // Get solution
     DefaultSolution<double> solution = solver.solution();

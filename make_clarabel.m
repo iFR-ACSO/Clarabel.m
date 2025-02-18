@@ -5,7 +5,7 @@ clear
 destinationFolder = pwd; 
 
 % Define the source path of the file
-sourceFolder = '..\..\Clarabel\clarabel\rust_wrapper\target\release'; % Replace with the actual path
+sourceFolder = 'Clarabel\rust_wrapper\target\release'; % Replace with the actual path
 fileName = 'clarabel_c.dll';
 
 % Create the full path for the source file and the destination
@@ -19,7 +19,7 @@ copyfile(sourceFile, destinationFile);
 disp(['File copied to: ', destinationFile]);
 
 % just for display output
-pause(1)
+% pause(1)
 disp('');
 disp('');
 
@@ -29,7 +29,8 @@ useFeatureSDP = true;
 
 % Get eigen path from environment variable or change the folder where you
 % stored eigen
-eigenPath = getenv('EIGEN_PATH'); 
+% eigenPath = getenv('EIGEN_PATH'); 
+eigenPath = 'C:/Users/ac133867/Desktop/Clarabel.m/eigen-3.4.0';
 if isempty(eigenPath)
     error('Environment variable EIGEN_PATH is not set.');
 else
@@ -43,14 +44,15 @@ disp('');
 pause(1)
 
 % Common paths to clarabel; make sure you first compiled the libraries!
-clarabelIncludePath = '..\..\Clarabel\clarabel\include';
-clarabelDLLPath = '..\..\Clarabel\clarabel\rust_wrapper\target\release\clarabel_c.dll.lib';
-clarabelLibPath = '..\..\Clarabel\clarabel\rust_wrapper\target\release\clarabel_c.lib';
+clarabelIncludePath = 'Clarabel\include';
+clarabelDLLPath = 'Clarabel\rust_wrapper\target\release\clarabel_c.dll.lib';
+clarabelLibPath = 'Clarabel\rust_wrapper\target\release\clarabel_c.lib';
 
 % Construct the mex command
 mexCmd = [
     'mex -v clarabel_mex.cpp ' ...
     (useFeatureSDP * '-DFEATURE_SDP ') ... % Conditionally add -DFEATURE_SDP
+    (useFeatureSDP * '-DFEATURE_FAER_SPARSE ') ... % Conditionally add -DFEATURE_SDP
     '-I"' eigenPath '" ' ... 
     '-I"' clarabelIncludePath '" ' ...
     '"' clarabelDLLPath '" ' ...
@@ -68,10 +70,10 @@ disp('');
 pause(1)
 
 %% add Clarabel_matlab path and subfolder permanently to matlab path
-disp('Adding clarabel_matlab folder and subfolder permanently to your MATLAB path.');
-folderToAdd = '../';
-addpath(genpath(folderToAdd));
-savepath;
+%disp('Adding clarabel_matlab folder and subfolder permanently to your MATLAB path.');
+%folderToAdd = '../';
+%addpath(genpath(folderToAdd));
+%savepath;
 
 
 disp('Clarabel .mex generation done.');

@@ -4,12 +4,12 @@ function settings = DefaultSettings()
 settings = struct();
 
 % Integer fields
-settings.max_iter = uint32(200); 
+settings.max_iter = uint32(50); 
 settings.equilibrate_max_iter = uint32(10); 
 settings.iterative_refinement_max_iter = uint32(10); 
 
 % Boolean fields
-settings.verbose = true; 
+settings.verbose = false; 
 settings.equilibrate_enable = true; 
 settings.direct_kkt_solver = true; 
 settings.static_regularization_enable = true; 
@@ -52,9 +52,9 @@ settings.iterative_refinement_abstol = 1e-12;
 settings.iterative_refinement_stop_ratio = 5.0; 
 
 % Enum fields
-settings.direct_solve_method = 'qldl'; % Default enum value
+settings.direct_solve_method = 'FAER'; % alternatives: 'qdldl' or 'FAER'
 % #ifdef FEATURE_SDP
-settings.chordal_decomposition_merge_method = 'clique_graph'; 
+settings.chordal_decomposition_merge_method = 'CLIQUE_GRAPH'; % 'PARENT_CHILD' or 'NONE' or 
 % #endif
 
 end
