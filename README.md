@@ -8,22 +8,42 @@ This repository contains a (work in progress) MATLAB mex interface to the recent
 [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation is realized via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
-1. clone this repo
+1. Install or update Rust (if necessary)
+2. Install eigen 
+3. Clone this repository
 ```
-git clone 
+git clone https://github.com/iFR-ACSO/Clarabel.m.git 
 ```
 
+4. Clone Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main))
+```
+git clone git@github.com:oxfordcontrol/Clarabel.cpp.git Clarabel
+```
+5. Go to the Clarabel folder
+6. Get the submodule
+```
+git submodule update --init --recursive
+```
+7. Adapt the Clarabel/Cmakelist.txt with the features you want. To use SDPs on Windows, select MKL (seems to be the only working solution on Windows)
+   ```
+   ...
+   set(CLARABEL_FEATURE_SDP "sdp-mkl" CACHE STRING "Package for SDP to be selected")
+   ...
+   ```
+8. In the Clarabel folder use open the Windows PowerShell
+7. Use the following commands to compile in release mode with faer-rs (efficient linear algebra in Rust) and vcpkg (change PathToVcpk to your installation directory)
+   ```
+   mkdir build
+   cd build
+   cmake .. -DCMAKE_TOOLCHAIN_FILE=PathToVcpk/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release -DCLARABEL_FEATURE_FAER_SPARSE=true
+   cmake --build .
+   ```
+8. Open Matlab and run
+```
+make_clarabel.m
+```
+This command copies the needed .dll (`clarabel_c.dll` must lie in the same folder as the mex function (Windows)) from the release folder (Clarabel/Rust-Wrapper/Release) to the current folder and sets up the path to eigen library, and to the other needed libraries (from clarabel) and compiles the mex filde. After compilation, the path to Clarabel.m is added permanently to your Matlab path. This also includes DefaultSetting.m, Folder with the specific cone functions and the example package, i.e., the re-implemented examples in Matlab from the C++ example package.
 
-1. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)) repository, install according to the description (get submodules, get compiler, etc.), and build the project to get libraries (for Windows: clarabel_c.lib, clarabel_c.dll.lib and clarabel_c.dll)
-2. Put libraries in the same folder where `make_clarabel.m` lies.
-3. Execute `make_clarabel.m` to generate the mex file.
-4. After the mex file is generated, the `clarabel_c.dll` must lie in the same folder as the mex function (Windows).
-
-
-Ensure you have the necessary mex file and libraries set up correctly before running e.g. the examples provided.
-
-# Current Status
-The current interface allow to solve all problems except SDPs. In the example folder, the MATLAB implementation of the examples found in the Clarabel.cpp repo are implemented. The current version is kept simple and will be adapted and augmented in the (near) future. 
 
 # Usage Example
 
