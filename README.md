@@ -8,37 +8,40 @@ This repository contains a (work in progress) MATLAB mex interface to the recent
 [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation is realized via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
-1. Install or update Rust (if necessary)
-2. Install eigen 
-3. Clone this repository
+The following instructions are for Windows, using an MS Visual Studio compiler. The .mex interface uses activated SDP feature of clarabel and assume we also use the more efficient [faer-rs](https://github.com/sarah-quinones/faer-rs) library.
+
+1. Install or update [Rust](https://www.rust-lang.org/tools/install) (if necessary)
+2. Install [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)). Add it to your ENVIRONMENT VARIABLES (or later passe the eigen folder in make_clarabel.m)
+3. Make sure you have a C/C++ compiler (in the following it is assumed that Visual Studio compiler is available; needed to compile the Rust-Wrapper and the actual .mex function)
+4. Clone this repository
 ```
 git clone https://github.com/iFR-ACSO/Clarabel.m.git 
 ```
 
-4. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main))
+5. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)) and name it Clarabel
 ```
 git clone git@github.com:oxfordcontrol/Clarabel.cpp.git Clarabel
 ```
-5. Go to the Clarabel folder
-6. Get the submodule
+6. Go to the Clarabel folder
+7. Get the submodule (Rust implementation of the actual solver)
 ```
 git submodule update --init --recursive
 ```
-7. Adapt the Clarabel/Cmakelist.txt with the features you want. To use SDPs on Windows, select MKL (seems to be the only working solution on Windows)
+8. Adapt the Clarabel/Cmakelist.txt with the features you want. To use SDPs on Windows, select MKL (seems to be the only working solution on Windows)
    ```
    ...
    set(CLARABEL_FEATURE_SDP "sdp-mkl" CACHE STRING "Package for SDP to be selected")
    ...
    ```
-8. In the Clarabel folder use open the Windows PowerShell
-7. Use the following commands to compile in release mode with faer-rs (efficient linear algebra in Rust) and vcpkg (change PathToVcpk to your installation directory)
+9. In the Clarabel folder use open the Windows PowerShell
+10. Use the following commands to compile in release mode with faer-rs (efficient linear algebra in Rust) and vcpkg (change PathToVcpk to your installation directory)
    ```
    mkdir build
    cd build
    cmake .. -DCMAKE_TOOLCHAIN_FILE=PathToVcpk/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release -DCLARABEL_FEATURE_FAER_SPARSE=true
    cmake --build .
    ```
-8. Open Matlab and run
+11. Open Matlab and run
 ```
 make_clarabel.m
 ```
