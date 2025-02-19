@@ -44,7 +44,7 @@ eigenPath = getenv('EIGEN_PATH');
 if isempty(eigenPath)
     disp('Environment variable EIGEN_PATH is not set.');
     % Set the path where you saved again manually
-    eigenPath = 'PUT THE PATH WHERE YOU SAVE EIGEN HERE'';
+    %eigenPath = 'PUT THE PATH WHERE YOU SAVE EIGEN HERE'';
     disp('Use manually inserted path.') 
 end
 
@@ -111,10 +111,10 @@ pause(1)
 
 
 %% add Clarabel_matlab path and subfolder permanently to matlab path
-%disp('Adding clarabel_matlab folder and subfolder permanently to your MATLAB path.');
-%folderToAdd = pwd;
-%addpath(genpath(folderToAdd));
-%savepath;
+disp('Adding clarabel_matlab folder and subfolder permanently to your MATLAB path.');
+folderToAdd = pwd;
+addpath(genpath(folderToAdd));
+savepath;
 
 
 disp('Clarabel .mex generation done.');
