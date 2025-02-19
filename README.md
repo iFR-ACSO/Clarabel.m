@@ -11,7 +11,9 @@ This repository contains a (work in progress) MATLAB mex interface to the recent
 The following instructions are for Windows, using an MS Visual Studio compiler. The .mex interface uses activated SDP feature of clarabel and assume we also use the more efficient [faer-rs](https://github.com/sarah-quinones/faer-rs) library.
 
 1. Install or update [Rust](https://www.rust-lang.org/tools/install) (if necessary)
-2. Install [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)). Add it to your ENVIRONMENT VARIABLES (or later passe the eigen folder in make_clarabel.m)
+2. Install [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)). Add it to your ENVIRONMENT VARIABLES (or later passe the eigen folder in make_clarabel.m) 
+> **Note**: 
+> On Linux, the standard installation procedure using `sudo apt-get install libeigen3-dev` will not work because the version available (v3.3.7) is outdated, version v3.4 is required. To resolve this, you will need to manually install the latest version of eigen directly from the [eigen website](https://eigen.tuxfamily.org/dox/). Follow the instructions there for a successful installation.
 3. Make sure you have a C/C++ compiler (in the following it is assumed that Visual Studio compiler is available; needed to compile the Rust-Wrapper and the actual .mex function)
 4. Clone this repository
 ```
@@ -33,19 +35,31 @@ git submodule update --init --recursive
    set(CLARABEL_FEATURE_SDP "sdp-mkl" CACHE STRING "Package for SDP to be selected")
    ...
    ```
-9. In the Clarabel folder, open the Windows PowerShell
-10. Use the following commands to compile in release mode with faer-rs (efficient linear algebra in Rust) and vcpkg (change PathToVcpk to your installation directory)
-   ```
+9. In the **Clarabel** folder, open a terminal (Linux) or **Windows PowerShell** (Windows).
+10.  Use the following commands to compile in release mode with faer-rs (efficient linear algebra in Rust) and vcpkg (change PathToVcpk to your installation directory)
+   On Windows:
+   ```powershell
    mkdir build
    cd build
    cmake .. -DCMAKE_TOOLCHAIN_FILE=PathToVcpk/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release -DCLARABEL_FEATURE_FAER_SPARSE=true
    cmake --build .
    ```
-11. Open Matlab and run
+   On Linux:
+   ```bash
+   mkdir build
+   cd build
+   cmake .. -DCMAKE_TOOLCHAIN_FILE=PathToVcpk/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-linux -DCMAKE_BUILD_TYPE=Release -DCLARABEL_FEATURE_FAER_SPARSE=true
+   cmake --build .
+   ```
+
+11.  Open Matlab and run
 ```
 make_clarabel.m
 ```
-This command copies the needed .dll (`clarabel_c.dll` must lie in the same folder as the mex function (Windows)) from the release folder (Clarabel/Rust-Wrapper/Release) to the current folder and sets up the path to eigen library, and to the other needed libraries (from clarabel) and compiles the mex filde. After compilation, the path to Clarabel.m is added permanently to your Matlab path. This includes clarabel_mex, DefaultSetting.m, the folder DefaultCones with the specific cone functions and the example folder, i.e., the re-implemented examples in Matlab from the C++ example package.
+> **Note**: 
+> To successfully run `make_clarabel.m`, you need to set the path to the Eigen library in the script if the path is not set in the environment variables. The variable to update is called `eigenPath`. Make sure it points to the correct location of your Eigen installation on your system.
+
+This command copies the needed .dll (or .so on Linux) from the release folder (Clarabel/Rust-Wrapper/Release) to the current folder and sets up the path to eigen library, and to the other needed libraries (from clarabel) and compiles the mex filde. After compilation, the path to Clarabel.m is added permanently to your Matlab path. This includes clarabel_mex, DefaultSetting.m, the folder DefaultCones with the specific cone functions and the example folder, i.e., the re-implemented examples in Matlab from the C++ example package.
 
 
 # Usage Example
