@@ -303,12 +303,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     DefaultSolver<double> solver(P, q, A, b, cones, settings);
 
     // Solve
-    solver.print_to_buffer();
+    //solver.print_to_buffer();
     solver.solve();
-	if (verbose) {
-		std::string bufstr = solver.get_print_buffer();
-		std::cout << bufstr << std::endl;
-	}
+	//if (verbose) {
+	//	std::string bufstr = solver.get_print_buffer();
+		//std::cout << bufstr << std::endl;
+	//}
     
 
     // Get solution
