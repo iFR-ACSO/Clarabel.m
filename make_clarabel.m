@@ -43,8 +43,8 @@ eigenPath = getenv('EIGEN_PATH');
 % If environment variable is not set, allow the user to manually input the path
 if isempty(eigenPath)
     disp('Environment variable EIGEN_PATH is not set.');
-    % eigenPath = 'C:/Users/ac133867/Desktop/Clarabel.m/eigen-3.4.0';
-    eigenPath = '/home/renato/eigen';
+    % Set the path where you saved again manually
+    eigenPath = 'PUT THE PATH WHERE YOU SAVE EIGEN HERE'';
     disp('Use manually inserted path.') 
 end
 
@@ -72,7 +72,7 @@ if ispc
     mexCmd = [
         'mex -v clarabel_mex.cpp ' ...
         (useFeatureSDP * '-DFEATURE_SDP ') ...          % Conditionally add -DFEATURE_SDP
-        (useFeatureSDP * '-DFEATURE_FAER_SPARSE ') ...  % Conditionally add -DFEATURE_SDP
+        (useFeatureSDP * '-DFEATURE_FAER_SPARSE ') ...  % Conditionally add -DFEATURE_FAER_SPARSE
         '-I"' eigenPath '" ' ... 
         '-I"' clarabelIncludePath '" ' ...
         '"' clarabelDLLPath '" ' ...
@@ -109,9 +109,10 @@ disp('');
 
 pause(1)
 
+
 %% add Clarabel_matlab path and subfolder permanently to matlab path
 %disp('Adding clarabel_matlab folder and subfolder permanently to your MATLAB path.');
-%folderToAdd = '../';
+%folderToAdd = pwd;
 %addpath(genpath(folderToAdd));
 %savepath;
 
