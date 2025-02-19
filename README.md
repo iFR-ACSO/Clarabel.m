@@ -8,7 +8,7 @@ This repository contains a (work in progress) MATLAB mex interface to the recent
 [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main), the C/C++ interface to the Rust implementation of Clarabel. The interface to the C++ implementation is realized via [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)).
 
 # Installation
-The following instructions are for Windows, using an MS Visual Studio compiler. The .mex interface uses activated SDP feature of clarabel and assume we also use the more efficient [faer-rs](https://github.com/sarah-quinones/faer-rs) library.
+The following instructions are for Windows and Linux. On Windows we used an MS Visual Studio compiler. The .mex interface uses activated SDP feature of clarabel and assume we also use the more efficient [faer-rs](https://github.com/sarah-quinones/faer-rs) library.
 
 1. Install or update [Rust](https://www.rust-lang.org/tools/install) (if necessary)
 2. Install [eigen](https://eigen.tuxfamily.org/index.php?title=Main\_Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)). Add it to your ENVIRONMENT VARIABLES (or later passe the eigen folder in make_clarabel.m) 
@@ -20,7 +20,7 @@ The following instructions are for Windows, using an MS Visual Studio compiler. 
 git clone https://github.com/iFR-ACSO/Clarabel.m.git 
 ```
 
-5. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main)) it into the main folder of Clarabel.m; name it Clarabel (both needed because the relative paths are set in make_clarabel.m)
+5. Clone [Clarabel.cpp](https://github.com/oxfordcontrol/Clarabel.cpp/tree/main) it into the main folder of Clarabel.m; name it Clarabel (both needed because the relative paths are set in make_clarabel.m)
 ```
 git clone git@github.com:oxfordcontrol/Clarabel.cpp.git Clarabel
 ```
@@ -36,7 +36,7 @@ git submodule update --init --recursive
    ...
    ```
 9. In the **Clarabel** folder, open a terminal (Linux) or **Windows PowerShell** (Windows).
-10.  Use the following commands to compile in release mode with faer-rs (efficient linear algebra in Rust) and vcpkg (change PathToVcpk to your installation directory)
+10.  Use the following commands to compile in release mode with faer-rs (efficient linear algebra in Rust) and vcpkg (on Windows) (change **PathToVcpk** to your installation directory)
    On Windows:
    ```powershell
    mkdir build
